@@ -1,4 +1,5 @@
 #include "filereader.h"
+#include <cmath>
 
 // FileReader::FileReader(char* sonarFilename, char* posFilename){
 //   this->sonarFile.open(sonarFilename);
@@ -77,6 +78,7 @@ void FileReader::createCoordFileBebop(float startTime, float dtIMU, int windowSi
   std::cout << "    Starting coords...\n";
   int ind=0;
   double x,y,z,x2,y2,z2;
+  double angle;
   double time;
   
   while (not posFile.eof()) {
@@ -100,7 +102,7 @@ void FileReader::createCoordFileBebop(float startTime, float dtIMU, int windowSi
       }
       
       sonarTime = getTimeSonar();
-//       getSonarBebop(sonarBuf);
+//        getSonarBebop(sonarBuf);
       getSonarBebop(tmpSonarBuf);
       sonarBuf[0] += tmpSonarBuf[0];
       sonarBuf[1] += tmpSonarBuf[1];
@@ -113,57 +115,70 @@ void FileReader::createCoordFileBebop(float startTime, float dtIMU, int windowSi
     sonarBuf[1] /= count;
     sonarBuf[2] /= count;
     sonarBuf[3] /= count;
-    
+        
     quatToRot(quatBuf, rotBuf);
     
+    //time, x, y, //z
     coordFile << (long)(time*1000.0) << " ";
     coordFile << posBuf[0]*1000.0 << " ";
     coordFile << (posBuf[1]*1000.0 - 20000.0) << " ";
-    coordFile << posBuf[2]*1000.0 << " ";
+//     coordFile << posBuf[2]*1000.0 << " ";
     
-    //nw sonar
-    x = sonarBuf[0]*10.0 + 100.0;
-    y = 100.0;
-    z = 0.0;
-    x2 = x*rotBuf[0] + y*rotBuf[1];
-    y2 = x*rotBuf[3] + y*rotBuf[4];
-    z2 = x*rotBuf[6] + y*rotBuf[7];
-    coordFile << x2 << " ";
-    coordFile << y2 << " ";
-    coordFile << z2 << " ";
+    //orientation
+    x = 1.0*rotBuf[0];
+    y = 1.0*rotBuf[3];
+    angle = atan2(y,x);
+    coordFile << angle << " ";
     
-    //ne sonar
-    x = sonarBuf[1]*10.0 + 100.0;
-    y = -100.0;
-    z = 0.0;
-    x2 = x*rotBuf[0] + y*rotBuf[1];
-    y2 = x*rotBuf[3] + y*rotBuf[4];
-    z2 = x*rotBuf[6] + y*rotBuf[7];
-    coordFile << x2 << " ";
-    coordFile << y2 << " ";
-    coordFile << z2 << " ";
+    //w, nw, ne, e
+    coordFile << sonarBuf[2]*10.0 << " ";
+    coordFile << sonarBuf[0]*10.0 << " ";
+    coordFile << sonarBuf[1]*10.0 << " ";
+    coordFile << sonarBuf[3]*10.0 << std::endl;
     
-    //w sonar
-    x = 0.0;
-    y = sonarBuf[2]*10.0 + 100.0;
-    z = 0.0;
-    x2 = x*rotBuf[0] + y*rotBuf[1];
-    y2 = x*rotBuf[3] + y*rotBuf[4];
-    z2 = x*rotBuf[6] + y*rotBuf[7];
-    coordFile << x2 << " ";
-    coordFile << y2 << " ";
-    coordFile << z2 << " ";
-    
-    //e sonar
-    x = 0.0;
-    y = -sonarBuf[3]*10.0 - 100.0;
-    z = 0.0;
-    x2 = x*rotBuf[0] + y*rotBuf[1];
-    y2 = x*rotBuf[3] + y*rotBuf[4];
-    z2 = x*rotBuf[6] + y*rotBuf[7];
-    coordFile << x2 << " ";
-    coordFile << y2 << " ";
-    coordFile << z2 << std::endl;
+//     //nw sonar
+//     x = sonarBuf[0]*10.0 + 100.0;
+//     y = 100.0;
+//     z = 0.0;
+//     x2 = x*rotBuf[0] + y*rotBuf[1];
+//     y2 = x*rotBuf[3] + y*rotBuf[4];
+//     z2 = x*rotBuf[6] + y*rotBuf[7];
+//     coordFile << x2 << " ";
+//     coordFile << y2 << " ";
+//     coordFile << z2 << " ";
+//     
+//     //ne sonar
+//     x = sonarBuf[1]*10.0 + 100.0;
+//     y = -100.0;
+//     z = 0.0;
+//     x2 = x*rotBuf[0] + y*rotBuf[1];
+//     y2 = x*rotBuf[3] + y*rotBuf[4];
+//     z2 = x*rotBuf[6] + y*rotBuf[7];
+//     coordFile << x2 << " ";
+//     coordFile << y2 << " ";
+//     coordFile << z2 << " ";
+//     
+//     //w sonar
+//     x = 0.0;
+//     y = sonarBuf[2]*10.0 + 100.0;
+//     z = 0.0;
+//     x2 = x*rotBuf[0] + y*rotBuf[1];
+//     y2 = x*rotBuf[3] + y*rotBuf[4];
+//     z2 = x*rotBuf[6] + y*rotBuf[7];
+//     coordFile << x2 << " ";
+//     coordFile << y2 << " ";
+//     coordFile << z2 << " ";
+//     
+//     //e sonar
+//     x = 0.0;
+//     y = -sonarBuf[3]*10.0 - 100.0;
+//     z = 0.0;
+//     x2 = x*rotBuf[0] + y*rotBuf[1];
+//     y2 = x*rotBuf[3] + y*rotBuf[4];
+//     z2 = x*rotBuf[6] + y*rotBuf[7];
+//     coordFile << x2 << " ";
+//     coordFile << y2 << " ";
+//     coordFile << z2 << std::endl;
   }
   
   std::cout << "    Closing\n";
