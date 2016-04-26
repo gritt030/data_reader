@@ -138,7 +138,8 @@ void FileReader::createCoordFileBA(float startTime, float dtIMU, int windowSize,
     
     //x, y, //z
     coordFile << (long)(time*1000.0) << " ";
-    coordFile << posBuf[0]*1000.0 << " ";
+    coordFile << (posBuf[0]*1000.0 - 20000.0) << " ";
+//         coordFile << (posBuf[1]*1000.0 - 20000.0) << " ";
     coordFile << (posBuf[1]*1000.0 - 20000.0) << " ";
 //     coordFile << posBuf[2]*1000.0 << " ";
     
@@ -221,7 +222,7 @@ void FileReader::skipNextBA(){
 
 
 void FileReader::nextLineBA(){
-  int toss;
+  double toss;
   posFile >> toss;
 }
 

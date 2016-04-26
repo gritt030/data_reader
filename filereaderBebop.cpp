@@ -120,8 +120,10 @@ void FileReader::createCoordFileBebop(float startTime, float dtIMU, int windowSi
     
     //time, x, y, //z
     coordFile << (long)(time*1000.0) << " ";
-    coordFile << posBuf[0]*1000.0 << " ";
-    coordFile << (posBuf[1]*1000.0 - 20000.0) << " ";
+    coordFile << (posBuf[0]*1000.0 - 20000.0) << " ";
+//     coordFile << (posBuf[0]) << " ";
+//     coordFile << (posBuf[1]*1000.0 - 20000.0) << " ";
+        coordFile << (posBuf[1]*1000.0 - 35000.0) << " ";
 //     coordFile << posBuf[2]*1000.0 << " ";
     
     //orientation
@@ -224,7 +226,8 @@ double FileReader::getTimeSonar(){
 
 void FileReader::nextLineBebop(){
   double toss;
-  for (int i=0; i<73; i++){
+//   for (int i=0; i<73; i++){
+  for (int i=0; i<83; i++){
     posFile >> toss;
   }
 }
